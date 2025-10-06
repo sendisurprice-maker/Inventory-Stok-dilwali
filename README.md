@@ -1,7 +1,5 @@
 # Inventory-Stok-dilwali
 LAPORAN INVENTORY BOOTH
-[booth-inventory-excel.html](https://github.com/user-attachments/files/22718448/booth-inventory-excel.html)
-<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
