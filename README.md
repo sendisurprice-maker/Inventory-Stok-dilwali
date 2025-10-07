@@ -57,7 +57,7 @@
     <h3>⚙️ Konfigurasi Google Sheets</h3>
     <label>URL Google Apps Script:</label>
     <input type="text" id="apiUrl"
-      value="https://script.google.com/macros/s/AKfycbzkCElaoI9fxJalptSjgddlbs73dPtq6Mc8TMta86dts0rpf8noAYW1Cy82fn3nklcxag/exec"
+      value="https://script.google.com/macros/s/AKfycbzkCElaoI9fxJaIptSjgddlbs73dPtq6Mc8TMta86dts0rpf8noAYW1Cy82fn3nklcxag/exec"
       placeholder="Masukkan URL Google Apps Script di sini">
     <button class="btn-primary" onclick="saveConfig()">💾 Simpan Konfigurasi</button>
     <button class="btn-success" onclick="loadData()">🔄 Muat Data dari Sheets</button>
