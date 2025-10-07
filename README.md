@@ -62,7 +62,7 @@
     <button class="btn-success" onclick="loadData()">🔄 Muat Data dari Sheets</button>
   </div>
 
-  <div class="summary-cards">
+  <div class="summary-cards"><script>
     <div class="card"><div>Total Item</div><div id="totalItem">0</div></div>
     <div class="card"><div>Stok Awal</div><div id="stokAwal">0</div></div>
     <div class="card"><div>Terjual</div><div id="totalTerjual">0</div></div>
@@ -73,7 +73,7 @@
   <div style="padding: 0 20px 20px 20px;">
     <button class="btn-success" onclick="openModalTambah()">➕ Tambah Produk</button>
     <button class="btn-info" onclick="hitungOtomatis()">🔄 Hitung Otomatis</button>
-    <button class="btn-warning" onclick="simpanKeSheets()">💾 Simpan ke Sheets</button>
+    <button class="btn btn-success" onclick="saveToDrive()">💾 Simpan ke Google Drive</button>
     <button class="btn-primary" onclick="exportExcel()">📊 Export Excel</button>
     <button class="btn-danger" onclick="generatePDF()">📄 Download PDF</button>
   </div>
@@ -114,6 +114,37 @@
 </div>
 
 <script>
+async function saveToDrive() {
+  try {
+    // 1. Buat file Excel dari data produk
+    const ws = XLSX.utils.json_to_sheet(produkData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Inventory");
+    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+
+    // 2. Buat file blob dari Excel
+    const file = new Blob([wbout], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+
+    // 3. Buat nama file unik
+    const fileName = `InventoryBooth_${new Date().toISOString().slice(0,10)}.xlsx`;
+
+    // 4. Gunakan Google Picker API atau manual upload
+    // Di sini kita langsung download dulu biar bisa kamu upload ke Drive manual
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(file);
+    link.download = fileName;
+    link.click();
+
+    alert("✅ File berhasil dibuat! Silakan upload manual ke Google Drive kamu.");
+  } catch (e) {
+    alert("❌ Gagal membuat file: " + e.message);
+    console.error(e);
+  }
+}
+</script>
+
 let produkData = [];
 let apiUrlConfig = "";
 
