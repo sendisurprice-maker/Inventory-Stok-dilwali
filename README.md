@@ -1,372 +1,247 @@
-# Inventory-Stok-dilwali
-LAPORAN INVENTORY BOOTH
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Laporan Inventory Booth</title>
+<title>Sistem Inventory Booth</title>
+
+<!-- Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
 <style>
   body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    padding: 20px;
-    background: #f5f5f5;
-    max-width: 1400px;
-    margin: 0 auto;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0; padding: 20px;
   }
-  h1 {
-    text-align: center;
-    color: #2c3e50;
-    margin-bottom: 10px;
+  .container {
+    max-width: 1400px; margin: auto; background: white;
+    border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   }
-  .header-info {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #34495e;
+  .header { background: #667eea; color: white; padding: 25px; text-align: center; }
+  .header h1 { margin: 0; font-size: 28px; }
+  .config-section {
+    background: #fff8dc; border: 2px solid #ffc107;
+    padding: 15px; margin: 20px; border-radius: 10px;
   }
-  .buttons {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  button {
-    padding: 10px 20px;
-    margin: 0 5px;
-    background: #1abc9c;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-  }
-  button:hover {
-    background: #16a085;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom: 30px;
-  }
-  th {
-    background: #34495e;
-    color: white;
-    padding: 12px;
-    text-align: left;
-    font-weight: 600;
-    font-size: 13px;
-    border: 1px solid #2c3e50;
-  }
-  td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    font-size: 13px;
-  }
-  tr:nth-child(even) {
-    background: #f9f9f9;
-  }
-  .editable {
-    background: #fff3cd;
-  }
-  input[type="number"] {
-    width: 60px;
-    padding: 5px;
-    border: 1px solid #bdc3c7;
-    border-radius: 4px;
-    text-align: center;
-  }
-  .total-row {
-    background: #ecf0f1 !important;
-    font-weight: 700;
-  }
-  .summary {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-  }
-  .summary h3 {
-    margin-top: 0;
-    color: #2c3e50;
-    border-bottom: 2px solid #1abc9c;
-    padding-bottom: 10px;
-  }
-  .summary-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-top: 15px;
-  }
-  .summary-item {
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 6px;
-    border-left: 4px solid #1abc9c;
-  }
-  .summary-label {
-    font-size: 12px;
-    color: #7f8c8d;
-    margin-bottom: 5px;
-  }
-  .summary-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: #2c3e50;
-  }
-  .alert {
-    background: #fff3cd;
-    border: 2px solid #ffc107;
-    padding: 15px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-  }
-  .alert h4 {
-    margin: 0 0 10px 0;
-    color: #856404;
-  }
-  @media print {
-    .buttons, .alert { display: none; }
-    body { background: white; }
-  }
+  label { font-weight: bold; }
+  input[type=text] { width: 100%; padding: 8px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
+  button { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; margin: 4px; }
+  .btn-primary { background: #667eea; color: white; }
+  .btn-success { background: #10b981; color: white; }
+  .btn-warning { background: #f59e0b; color: white; }
+  .btn-danger { background: #ef4444; color: white; }
+  .btn-info { background: #06b6d4; color: white; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+  th { background: #667eea; color: white; position: sticky; top: 0; }
+  .summary-cards { display: flex; gap: 15px; flex-wrap: wrap; margin: 20px; }
+  .card { flex: 1; background: #667eea; color: white; padding: 15px; border-radius: 8px; text-align: center; }
+  .badge { padding: 4px 10px; border-radius: 10px; font-size: 12px; font-weight: bold; }
+  .badge-success { background: #d1fae5; color: #065f46; }
+  .badge-danger { background: #fee2e2; color: #991b1b; }
+  .badge-warning { background: #fef3c7; color: #92400e; }
 </style>
 </head>
 <body>
 
-<h1>LAPORAN INVENTORY BOOTH</h1>
-<div class="header-info">
-  <strong>Acara Booth Tanggal: 11 - 12 Oktober 2025</strong><br>
-  Tim Surprice
-</div>
+<div class="container">
+  <div class="header">
+    <h1>📦 SISTEM INVENTORY BOOTH</h1>
+    <p>Terhubung langsung ke Google Spreadsheet</p>
+  </div>
 
-<div class="buttons">
-  <button onclick="hitungOtomatis()">🔄 Hitung Otomatis</button>
-  <button onclick="window.print()">🖨️ Print / Save PDF</button>
-  <button onclick="exportToExcel()">📊 Export ke Excel</button>
-</div>
+  <div class="config-section">
+    <h3>⚙️ Konfigurasi Google Sheets</h3>
+    <label>URL Google Apps Script:</label>
+    <input type="text" id="apiUrl"
+      value="https://script.google.com/macros/s/AKfycbzkCElaoI9fxJalptSjgddlbs73dPtq6Mc8TMta86dts0rpf8noAYW1Cy82fn3nklcxag/exec"
+      placeholder="Masukkan URL Google Apps Script di sini">
+    <button class="btn-primary" onclick="saveConfig()">💾 Simpan Konfigurasi</button>
+    <button class="btn-success" onclick="loadData()">🔄 Muat Data dari Sheets</button>
+  </div>
 
-<div class="alert">
-  <h4>📝 Cara Penggunaan:</h4>
-  <ol style="margin: 5px 0; padding-left: 20px;">
-    <li>Isi kolom <strong>"Terjual Hari 1"</strong> dan <strong>"Terjual Hari 2"</strong></li>
-    <li>Isi kolom <strong>"Stok Kembali"</strong> (barang yang dibawa pulang)</li>
-    <li>Klik tombol <strong>"Hitung Otomatis"</strong></li>
-    <li>Kolom "Selisih" akan otomatis terhitung (jika ada barang hilang/rusak)</li>
-  </ol>
-</div>
+  <div class="summary-cards">
+    <div class="card"><div>Total Item</div><div id="totalItem">0</div></div>
+    <div class="card"><div>Stok Awal</div><div id="stokAwal">0</div></div>
+    <div class="card"><div>Terjual</div><div id="totalTerjual">0</div></div>
+    <div class="card"><div>Kembali</div><div id="totalKembali">0</div></div>
+    <div class="card"><div>Tersedia</div><div id="stokTersedia">0</div></div>
+  </div>
 
-<div class="summary">
-  <h3>📊 Ringkasan Inventory</h3>
-  <div class="summary-grid">
-    <div class="summary-item">
-      <div class="summary-label">Total Item</div>
-      <div class="summary-value" id="totalItem">0</div>
-    </div>
-    <div class="summary-item">
-      <div class="summary-label">Total Stok Keluar</div>
-      <div class="summary-value" id="totalKeluar">0</div>
-    </div>
-    <div class="summary-item">
-      <div class="summary-label">Total Terjual</div>
-      <div class="summary-value" id="totalTerjual">0</div>
-    </div>
-    <div class="summary-item">
-      <div class="summary-label">Total Kembali</div>
-      <div class="summary-value" id="totalKembali">0</div>
-    </div>
-    <div class="summary-item" style="border-left-color: #e74c3c;">
-      <div class="summary-label">Total Selisih</div>
-      <div class="summary-value" id="totalSelisih" style="color: #e74c3c;">0</div>
-    </div>
+  <div style="padding: 0 20px 20px 20px;">
+    <button class="btn-success" onclick="openModalTambah()">➕ Tambah Produk</button>
+    <button class="btn-info" onclick="hitungOtomatis()">🔄 Hitung Otomatis</button>
+    <button class="btn-warning" onclick="simpanKeSheets()">💾 Simpan ke Sheets</button>
+    <button class="btn-primary" onclick="exportExcel()">📊 Export Excel</button>
+    <button class="btn-danger" onclick="generatePDF()">📄 Download PDF</button>
+  </div>
+
+  <div class="table-container" style="padding:20px;">
+    <table id="inventoryTable">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Kode Barang</th>
+          <th>Nama Barang</th>
+          <th>Stok Awal</th>
+          <th>Terjual</th>
+          <th>Kembali</th>
+          <th>Tersedia</th>
+          <th>Selisih</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr><td colspan="10" style="text-align:center; padding:40px;">📭 Belum ada data. Klik "Muat Data dari Sheets".</td></tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
-<table id="inventoryTable">
-  <thead>
-    <tr>
-      <th style="width: 40px;">No</th>
-      <th style="width: 150px;">Kode Barang</th>
-      <th>Nama Barang</th>
-      <th style="width: 80px;">Stok Keluar</th>
-      <th style="width: 90px;" class="editable">Terjual Hari 1</th>
-      <th style="width: 90px;" class="editable">Terjual Hari 2</th>
-      <th style="width: 90px;">Total Terjual</th>
-      <th style="width: 90px;" class="editable">Stok Kembali</th>
-      <th style="width: 80px;">Selisih</th>
-      <th style="width: 120px;">Keterangan</th>
-    </tr>
-  </thead>
-  <tbody id="tableBody">
-  </tbody>
-</table>
+<!-- Modal Tambah -->
+<div id="modalTambah" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+  <div style="background:white; padding:20px; border-radius:10px; width:300px;">
+    <h3>Tambah Produk</h3>
+    <label>Kode Barang:</label><input type="text" id="inputKode"><br>
+    <label>Nama Barang:</label><input type="text" id="inputNama"><br>
+    <label>Stok Awal:</label><input type="number" id="inputStok"><br>
+    <button class="btn-success" onclick="tambahProduk()">✅ Simpan</button>
+    <button class="btn-danger" onclick="closeModal()">❌ Batal</button>
+  </div>
+</div>
 
 <script>
-const data = [
-  {no: 1, kode: "Cul 3805", nama: "Cul 3805", stok: 10, sampel: 1},
-  {no: 2, kode: "TLG TESSA-1", nama: "TLG TESSA-1", stok: 10, sampel: 1},
-  {no: 3, kode: "GILI 9604-GGI", nama: "GILI 9604 - GGI (GBT)", stok: 1, sampel: 1},
-  {no: 4, kode: "GK", nama: "GK", stok: 3},
-  {no: 5, kode: "GB", nama: "GB", stok: 1},
-  {no: 6, kode: "Cul 3608", nama: "Cul 3608", stok: 5, sampel: 1},
-  {no: 7, kode: "2Em 3508/11", nama: "2Em 3508/11", stok: 1, sampel: 1},
-  {no: 8, kode: "TLG Cul3604", nama: "TLG - Cul3604 / Cui 1005", stok: 5, sampel: 1},
-  {no: 9, kode: "TLG Cul 3607", nama: "TLG - Cul 3607 / Cui 1010.5", stok: 5, sampel: 1},
-  {no: 10, kode: "TLG Cul 3612", nama: "TLG Cul 3612 M/L", stok: 5, sampel: 1},
-  {no: 11, kode: "TLG TANIA-1", nama: "TLG - TANIA - 1", stok: 5, sampel: 1},
-  {no: 12, kode: "OEM3512", nama: "OEM3512 s/m /L", stok: 6, sampel: 1},
-  {no: 13, kode: "ATZ 9604-P", nama: "ATZ 9604 - P", stok: 2},
-  {no: 14, kode: "ATZ 9604-B", nama: "ATZ 9604 - B", stok: 1},
-  {no: 15, kode: "ATZ 9604-U", nama: "ATZ 9604 - U", stok: 2, sampel: 1},
-  {no: 16, kode: "OEM 8505/06", nama: "OEM 8505 /06", stok: 85, sampel: 1},
-  {no: 17, kode: "MND 1002-G", nama: "MND 1002 - G", stok: 85, sampel: 1},
-  {no: 18, kode: "Cui 1005-L", nama: "Cui 1005 - L", stok: 5, sampel: 1},
-  {no: 19, kode: "Cui 1005-M", nama: "Cui 1005 - M", stok: 5, sampel: 1},
-  {no: 20, kode: "TFB 3602", nama: "TFB 3602", stok: 5},
-  {no: 21, kode: "TFB 3603", nama: "TFB 3603", stok: 3},
-  {no: 22, kode: "TFB 3604", nama: "TFB 3604", stok: 5, sampel: 1},
-  {no: 23, kode: "TKB 3605", nama: "TKB 3605", stok: 3},
-  {no: 24, kode: "TKB 3606", nama: "TKB 3606", stok: 3},
-  {no: 25, kode: "TKB 3607", nama: "TKB 3607", stok: 3},
-  {no: 26, kode: "TKB 3608", nama: "TKB 3608", stok: 3},
-  {no: 27, kode: "TKB 3609", nama: "TKB 3609", stok: 3, sampel: 1},
-  {no: 28, kode: "TLG Fei 5602", nama: "TLG Fei 5602 m/L", stok: 3},
-  {no: 29, kode: "Fei B602", nama: "Fei B602 m/E", stok: 3, sampel: 1},
-  {no: 30, kode: "Fei 5602 L", nama: "Fei 5602 L", stok: 3, sampel: 1},
-  {no: 31, kode: "TKB 3610", nama: "TKB 3610", stok: 3, sampel: 1},
-  {no: 32, kode: "TLG Fei 5601", nama: "TLG Fei 5601 m/L", stok: 3},
-  {no: 33, kode: "Fei 5601 m", nama: "Fei 5601 m", stok: 3, sampel: 1},
-  {no: 34, kode: "Fei 5601 L", nama: "Fei 5601 L", stok: 3, sampel: 1},
-  {no: 35, kode: "Fei Si 02 m", nama: "Fei Si 02 m", stok: 3, sampel: 1},
-  {no: 36, kode: "Fei 5103 m/L", nama: "Fei 5103 m/L", stok: 3},
-  {no: 37, kode: "Fei 5103 m", nama: "Fei 5103 m", stok: 3, sampel: 1},
-  {no: 38, kode: "Fei 5103 L", nama: "Fei 5103 L", stok: 3, sampel: 1},
-  {no: 39, kode: "Fei 5103 4 m", nama: "Fei 5103 4 m", stok: 3, sampel: 1},
-  {no: 40, kode: "SGB 2602", nama: "SGB 2602", stok: 2, sampel: 1},
-  {no: 41, kode: "SGB 3604", nama: "SGB 3604", stok: 2, sampel: 1},
-  {no: 42, kode: "SGB 3605", nama: "SGB 3605", stok: 1, sampel: 1},
-  {no: 43, kode: "KFC 5603", nama: "KFC 5603", stok: 3},
-  {no: 44, kode: "PTT 5601", nama: "PTT 5601", stok: 3},
-  {no: 45, kode: "PTT 5603", nama: "PTT 5603", stok: 3},
-  {no: 46, kode: "KFC Sar2", nama: "KFC Sar2", stok: 2},
-  {no: 47, kode: "PTT 5611", nama: "PTT 5611", stok: 3},
-  {no: 48, kode: "PTT 5612", nama: "PTT 5612", stok: 3},
-  {no: 49, kode: "PTT 5615", nama: "PTT 5615", stok: 3},
-  {no: 50, kode: "QYE 5705", nama: "QYE 5705", stok: 3},
-  {no: 51, kode: "QYE 5706", nama: "QYE 5706", stok: 3, sampel: 1},
-  {no: 52, kode: "QYE 5701", nama: "QYE 5701", stok: 3},
-  {no: 53, kode: "QYE 5702", nama: "QYE 5702", stok: 3},
-  {no: 54, kode: "QYE 5703", nama: "QYE 5703", stok: 3},
-  {no: 55, kode: "QYE 5704", nama: "QYE 5704", stok: 3, sampel: 1}
-];
+let produkData = [];
+let apiUrlConfig = "";
 
+// Load otomatis saat dibuka
+window.onload = () => {
+  const savedUrl = localStorage.getItem("apiUrl");
+  if (savedUrl) {
+    document.getElementById("apiUrl").value = savedUrl;
+    apiUrlConfig = savedUrl;
+    loadData();
+  }
+};
+
+// Simpan URL
+function saveConfig() {
+  const url = document.getElementById("apiUrl").value.trim();
+  if (!url) return alert("❌ URL tidak boleh kosong!");
+  localStorage.setItem("apiUrl", url);
+  apiUrlConfig = url;
+  alert("✅ URL disimpan!");
+}
+
+// Load data
+async function loadData() {
+  if (!apiUrlConfig) return alert("❌ Isi URL dulu!");
+  try {
+    const res = await fetch(apiUrlConfig + "?action=getProduk");
+    const result = await res.json();
+    if (result.status === "success") {
+      produkData = result.data;
+      renderTable();
+      hitungOtomatis();
+    } else throw new Error(result.message);
+  } catch (e) {
+    alert("❌ Gagal muat data: " + e.message);
+  }
+}
+
+// Simpan ke Sheets
+async function simpanKeSheets() {
+  if (!apiUrlConfig) return alert("❌ URL belum diisi!");
+  try {
+    const res = await fetch(apiUrlConfig + "?action=saveProduk", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(produkData),
+    });
+    const result = await res.json();
+    if (result.status === "success") alert("✅ Tersimpan ke Google Sheets!");
+    else throw new Error(result.message);
+  } catch (e) {
+    alert("❌ Gagal simpan: " + e.message);
+  }
+}
+
+// Render tabel
 function renderTable() {
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = '';
-  
-  data.forEach((item, index) => {
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = "";
+  if (produkData.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;">📭 Belum ada data</td></tr>';
+    return;
+  }
+  produkData.forEach((item, i) => {
     const row = tbody.insertRow();
     row.innerHTML = `
-      <td>${item.no}</td>
-      <td>${item.kode}</td>
-      <td>${item.nama}</td>
-      <td style="text-align: center;">${item.stok}</td>
-      <td style="text-align: center;"><input type="number" min="0" value="0" id="h1_${index}" onchange="hitung(${index})"></td>
-      <td style="text-align: center;"><input type="number" min="0" value="0" id="h2_${index}" onchange="hitung(${index})"></td>
-      <td style="text-align: center;" id="total_${index}">0</td>
-      <td style="text-align: center;"><input type="number" min="0" value="0" id="kembali_${index}" onchange="hitung(${index})"></td>
-      <td style="text-align: center;" id="selisih_${index}">0</td>
-      <td><span id="ket_${index}">${item.sampel ? 'Sampel: ' + item.sampel : ''}</span></td>
-    `;
+      <td>${i+1}</td><td>${item.kode}</td><td>${item.nama}</td>
+      <td>${item.stok}</td>
+      <td><input type="number" min="0" value="0" id="terjual_${i}" onchange="hitung(${i})"></td>
+      <td><input type="number" min="0" value="0" id="kembali_${i}" onchange="hitung(${i})"></td>
+      <td id="tersedia_${i}">-</td><td id="selisih_${i}">-</td><td id="status_${i}">-</td>
+      <td><button class="btn-danger" onclick="hapusProduk(${i})">🗑️</button></td>`;
   });
-  
-  // Total row
-  const totalRow = tbody.insertRow();
-  totalRow.className = 'total-row';
-  totalRow.innerHTML = `
-    <td colspan="3" style="text-align: right; font-weight: bold;">TOTAL:</td>
-    <td style="text-align: center;" id="footerStok">0</td>
-    <td style="text-align: center;" id="footerH1">0</td>
-    <td style="text-align: center;" id="footerH2">0</td>
-    <td style="text-align: center;" id="footerTotal">0</td>
-    <td style="text-align: center;" id="footerKembali">0</td>
-    <td style="text-align: center;" id="footerSelisih">0</td>
-    <td></td>
-  `;
-  
+}
+
+// Hitung otomatis
+function hitungOtomatis(){ produkData.forEach((_,i)=>hitung(i)); updateSummary(); }
+function hitung(i){
+  const item = produkData[i];
+  const terjual = +document.getElementById(`terjual_${i}`).value || 0;
+  const kembali = +document.getElementById(`kembali_${i}`).value || 0;
+  const tersedia = item.stok - terjual;
+  const selisih = tersedia - kembali;
+  document.getElementById(`tersedia_${i}`).textContent = tersedia;
+  document.getElementById(`selisih_${i}`).textContent = selisih;
+  let status = "✅ Sesuai";
+  if (selisih > 0) status = `<span class='badge badge-danger'>⚠️ Hilang ${selisih}</span>`;
+  else if (selisih < 0) status = `<span class='badge badge-warning'>⚠️ Lebih ${Math.abs(selisih)}</span>`;
+  document.getElementById(`status_${i}`).innerHTML = status;
   updateSummary();
 }
-
-function hitung(index) {
-  const h1 = parseInt(document.getElementById(`h1_${index}`).value) || 0;
-  const h2 = parseInt(document.getElementById(`h2_${index}`).value) || 0;
-  const kembali = parseInt(document.getElementById(`kembali_${index}`).value) || 0;
-  const stok = data[index].stok;
-  
-  const totalTerjual = h1 + h2;
-  const selisih = stok - totalTerjual - kembali;
-  
-  document.getElementById(`total_${index}`).textContent = totalTerjual;
-  document.getElementById(`selisih_${index}`).textContent = selisih;
-  
-  const ketEl = document.getElementById(`ket_${index}`);
-  let ket = data[index].sampel ? `Sampel: ${data[index].sampel}` : '';
-  if (selisih > 0) {
-    ket += (ket ? ' | ' : '') + `⚠️ Hilang/Rusak: ${selisih}`;
-    document.getElementById(`selisih_${index}`).style.color = '#e74c3c';
-    document.getElementById(`selisih_${index}`).style.fontWeight = 'bold';
-  } else if (selisih < 0) {
-    ket += (ket ? ' | ' : '') + `⚠️ Lebih: ${Math.abs(selisih)}`;
-    document.getElementById(`selisih_${index}`).style.color = '#e67e22';
-    document.getElementById(`selisih_${index}`).style.fontWeight = 'bold';
-  } else {
-    document.getElementById(`selisih_${index}`).style.color = '#27ae60';
-    document.getElementById(`selisih_${index}`).style.fontWeight = 'bold';
-  }
-  ketEl.innerHTML = ket;
-}
-
-function hitungOtomatis() {
-  let totalStok = 0;
-  let totalH1 = 0;
-  let totalH2 = 0;
-  let totalTerjual = 0;
-  let totalKembali = 0;
-  let totalSelisih = 0;
-  
-  data.forEach((item, index) => {
-    hitung(index);
+function updateSummary(){
+  let totalStok=0, totalTerjual=0, totalKembali=0, totalTersedia=0;
+  produkData.forEach((item,i)=>{
     totalStok += item.stok;
-    totalH1 += parseInt(document.getElementById(`h1_${index}`).value) || 0;
-    totalH2 += parseInt(document.getElementById(`h2_${index}`).value) || 0;
-    totalTerjual += parseInt(document.getElementById(`total_${index}`).textContent);
-    totalKembali += parseInt(document.getElementById(`kembali_${index}`).value) || 0;
-    totalSelisih += parseInt(document.getElementById(`selisih_${index}`).textContent);
+    totalTerjual += +document.getElementById(`terjual_${i}`)?.value || 0;
+    totalKembali += +document.getElementById(`kembali_${i}`)?.value || 0;
+    totalTersedia += item.stok - (+document.getElementById(`terjual_${i}`)?.value||0);
   });
-  
-  document.getElementById('footerStok').textContent = totalStok;
-  document.getElementById('footerH1').textContent = totalH1;
-  document.getElementById('footerH2').textContent = totalH2;
-  document.getElementById('footerTotal').textContent = totalTerjual;
-  document.getElementById('footerKembali').textContent = totalKembali;
-  document.getElementById('footerSelisih').textContent = totalSelisih;
-  
-  updateSummary();
+  document.getElementById("totalItem").textContent=produkData.length;
+  document.getElementById("stokAwal").textContent=totalStok;
+  document.getElementById("totalTerjual").textContent=totalTerjual;
+  document.getElementById("totalKembali").textContent=totalKembali;
+  document.getElementById("stokTersedia").textContent=totalTersedia;
 }
 
-function updateSummary() {
-  document.getElementById('totalItem').textContent = data.length;
-  document.getElementById('totalKeluar').textContent = document.getElementById('footerStok').textContent;
-  document.getElementById('totalTerjual').textContent = document.getElementById('footerTotal').textContent;
-  document.getElementById('totalKembali').textContent = document.getElementById('footerKembali').textContent;
-  document.getElementById('totalSelisih').textContent = document.getElementById('footerSelisih').textContent;
+// Modal tambah
+function openModalTambah(){ document.getElementById("modalTambah").style.display="flex"; }
+function closeModal(){ document.getElementById("modalTambah").style.display="none"; }
+function tambahProduk(){
+  const kode=document.getElementById("inputKode").value.trim();
+  const nama=document.getElementById("inputNama").value.trim();
+  const stok=+document.getElementById("inputStok").value||0;
+  if(!kode||!nama)return alert("❌ Lengkapi data!");
+  produkData.push({kode,nama,stok});
+  closeModal(); renderTable(); updateSummary();
 }
 
-function exportToExcel() {
-  alert('Untuk export ke Excel:\n1. Klik tombol "Print / Save PDF"\n2. Pilih "Save as PDF"\n3. Buka PDF dan copy ke Excel\n\nAtau screenshot tabel ini dan paste ke Excel.');
-}
+// Hapus produk
+function hapusProduk(i){ if(confirm("Hapus produk ini?")){ produkData.splice(i,1); renderTable(); updateSummary(); }}
 
-renderTable();
+// Export Excel
+function exportExcel(){ const ws=XLSX.utils.json_to_sheet(produkData); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Inventory"); XLSX.writeFile(wb,"Laporan_Inventory.xlsx"); }
+
+// PDF
+function generatePDF(){ const{jsPDF}=window.jspdf; const doc=new jsPDF(); doc.text("Laporan Inventory Booth",14,20);
+doc.autoTable({head:[["No","Kode","Nama","Stok"]],body:produkData.map((p,i)=>[i+1,p.kode,p.nama,p.stok]),startY:30}); doc.save("Laporan_Inventory.pdf"); }
 </script>
-
 </body>
 </html>
